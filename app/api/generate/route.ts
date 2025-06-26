@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
             .split("\n")
             .map((task: string) => task.trim())
             .filter((task: string) => task.length > 0);
-        const inserts: typeof tasks.$inferInsert[] = generatedTasks.map((task) => ({
+        const inserts: typeof tasks.$inferInsert[] = generatedTasks.map((task:string) => ({
             userId,
             title: task,
             topic,
