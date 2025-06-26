@@ -7,8 +7,7 @@ import { tasks } from "@/lib/schema";
 import { eq } from "drizzle-orm";
 
 // ✅ GET: Fetch tasks
-export async function GET(_req: NextRequest) {
-
+export async function GET() {
   const { userId } = await auth();
 
   if (!userId) {
