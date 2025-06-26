@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/Progress";
 
-// NEW: Circular ProgressBar component
+// ✅ Circular ProgressBar
 function CircularProgress({ value }: { value: number }) {
   const radius = 40;
   const stroke = 8;
@@ -15,7 +15,7 @@ function CircularProgress({ value }: { value: number }) {
   const strokeDashoffset = circumference - (value / 100) * circumference;
 
   return (
-    <div className="w-22 h-20 relative"> 
+    <div className="w-22 h-20 relative">
       <svg height={radius * 2} width={radius * 2} className="rotate-[-90deg]">
         <circle
           stroke="#e5e7eb"
@@ -36,15 +36,16 @@ function CircularProgress({ value }: { value: number }) {
           cy={radius}
         />
       </svg>
-      <div className="absolute inset-0 flex items-center  text-center justify-center text-sm font-semibold">
+      <div className="absolute inset-0 flex items-center text-center justify-center text-sm font-semibold">
         {Math.round(value)}%
       </div>
     </div>
   );
 }
 
+// ✅ Task type
 type TaskItem = {
-  id?: number; 
+  id?: number;
   title: string;
   topic: string;
   isCompleted?: boolean;
@@ -58,6 +59,7 @@ export default function Dashboard() {
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [editedTitle, setEditedTitle] = useState<string>("");
 
+  // ✅ Load from localStorage
   useEffect(() => {
     const saved = localStorage.getItem("tasks");
     if (saved) {
@@ -71,10 +73,12 @@ export default function Dashboard() {
     }
   }, []);
 
+  // ✅ Save to localStorage
   useEffect(() => {
     localStorage.setItem("tasks", JSON.stringify(tasks));
   }, [tasks]);
 
+  // ✅ Generate AI Tasks
   const generateTasks = async () => {
     setLoading(true);
     const res = await fetch("/api/generate", {
@@ -94,6 +98,7 @@ export default function Dashboard() {
     setLoading(false);
   };
 
+  // ✅ Toggle completion
   const toggleComplete = (index: number) => {
     const updated = [...tasks];
     updated[index].isCompleted = !updated[index].isCompleted;
@@ -101,6 +106,7 @@ export default function Dashboard() {
     setCompleted((prev) => ({ ...prev, [index]: !prev[index] }));
   };
 
+  // ✅ Save to DB
   const saveTask = async (task: TaskItem, index: number) => {
     const res = await fetch("/api/tasks", {
       method: "POST",
@@ -125,10 +131,12 @@ export default function Dashboard() {
     }
   };
 
+  // ✅ Delete task
   const deleteTask = (index: number) => {
     setTasks((prev) => prev.filter((_, i) => i !== index));
   };
 
+  // ✅ Edit task title
   const startEditing = (index: number) => {
     setEditingIndex(index);
     setEditedTitle(tasks[index].title);
@@ -188,7 +196,6 @@ export default function Dashboard() {
               ) : (
                 <span
                   className={completed[i] ? "line-through text-gray-500" : ""}
-                  onDoubleClick={() => startEditing(i)}
                 >
                   {task.title}
                 </span>
@@ -196,9 +203,20 @@ export default function Dashboard() {
             </div>
 
             <div className="flex gap-2">
+              {editingIndex === i ? (
+                <Button variant="secondary" onClick={() => applyEdit(i)}>
+                  Apply
+                </Button>
+              ) : (
+                <Button variant="secondary" onClick={() => startEditing(i)}>
+                  Edit
+                </Button>
+              )}
+
               <Button variant="outline" onClick={() => saveTask(task, i)}>
                 Save
               </Button>
+
               <Button variant="destructive" onClick={() => deleteTask(i)}>
                 Delete
               </Button>
