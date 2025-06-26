@@ -14,7 +14,12 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const result = await db.select().from(tasks).where(eq(tasks.userId, userId)).limit(5);
+  const result = await db
+    .select()
+    .from(tasks)
+    .where(eq(tasks.userId, userId))
+    .limit(5); // optional: fetch only 5
+
   return NextResponse.json(result);
 }
 
